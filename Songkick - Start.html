@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Bands In Town</title>
+  <!-- or datepicker -->
+  <!--<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">-->
+</head>
+
+<body>
+
+  <!-- Artist Select Box -->
+  <form id="artist-form">
+
+    <!-- Label for Text Box -->
+    <label for="artist-input">Choose Your Artist</label>
+
+    <!-- Text Input Box -->
+    <input type="text" id="artist-input">
+    <br>
+
+    <!-- Submit Button -->
+    <input id="select-artist" type="submit" value="GO!">
+  </form>
+
+  <!-- Datepicker -->
+  <p>Date:
+    <input type="text" id="datepicker">
+  </p>
+
+  <!-- Artist Information -->
+  <div id="artist-div"></div>
+
+</body>
+
+<!-- Link to Moment.js should go here -->
+<script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+  //   $( function() {
+  //   $( "#datepicker" ).datepicker();
+  // } );
+
+  function searchBandsInTown(artist) {
+
+    // Querying the bandsintown api for the selected artist, the ?app_id parameter is required, but can equal anything
+    //var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=codingbootcamp";
+    //var queryURL = "https://rest.bandsintown.com/artists/" + artist + "?app_id=497d1bb241a11126c75fcc445e45e407";
+    // var queryURL = "https://rest.bandsintown.com/artists/Kenny%20Chesney/" + 
+    // "events?app_id=497d1bb241a11126c75fcc445e45e407&date=2018-06-01%2C2018-06-10";
+    //var queryURL = 'https://api.songkick.com/api/3.0/artists/217815/calendar.json?apikey=io09K9l3ebJxmxe2';
+    //var queryURL='https://api.songkick.com/api/3.0/search/locations.json?location=geo:41.49,-81.6944&apikey=fBumaIA9ozKvmLJA';
+    //var queryURL='https://api.songkick.com/api/3.0/artists/217815/gigography.json?apikey=fBumalA9ozKvmLJA&min_date=2018-06-01&max_date=2018-06-05';
+    var queryURL = 'https://api.songkick.com/api/3.0/metro_areas/14700/calendar.json?apikey=fBumaIA9ozKvmLJA&min_date=2018-06-16&max_date=2018-06-16';
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).then(function (response) {
+      console.log(response);
+
+      // Printing the entire object to console
+      console.log("queryurl = " + queryURL);
+      var numberOfEvents = response.resultsPage.results.event.length;
+      console.log("number of events = " + numberOfEvents);
+
+      for (var i = 0; i < numberOfEvents; i++) {
+        var currentEvent = response.resultsPage.results.event;
+        console.log('************************************')
+        console.log("type--> " + currentEvent[i].type);
+        console.log("eventdisplayname--> " + currentEvent[i].displayName);
+        // console.log("type " + response.resultsPage.results.event[i].type);
+        // console.log("eventdisplayname" + response.resultsPage.results.event[i].displayName);
+        var artistPerformance = response.resultsPage.results.event[i].performance;
+        console.log("artist array length--> " + artistPerformance.length)
+        //console.log("artistlength " + response.resultsPage.results.event[0].performance.length )
+        //console.log("artist Displayname " + artistArray[i].displayName + " type= " + artistArray[i].billing);
+        //console.log("before for loop = artistarray.length " + artistPerformance.length);
+        for (var j = 0; j < artistPerformance.length; j++) {
+
+          var artistInfo = artistPerformance[j];
+          console.log("in loop artist Displayname--> " + artistInfo.displayName + " **TYPE--> " + artistInfo.billing);
+
+        }
+
+        console.log('Start Time--> ' + currentEvent[i].start.time);
+        var startTime = currentEvent[i].start.time;
+        var formatStartTime = '';
+        if (startTime !== null) {
+          formatStartTime = moment(startTime, "HH:mm").format("hh:mm a");
+        }
+        else {
+          formatStartTime = "No Time Provided";
+        }
+        // var formatStartTime = moment(currentEvent[i].start.time,"HH:mm");
+        //var formatStartTime = moment.unix(currentEvent[i].start.time).format("hh:mm:ss");
+
+        // // Time is 3:30 AM
+        // var firstTime = "03:30";
+
+        // // First Time (pushed back 1 year to make sure it comes before current time)
+        // var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1, "years");
+        // console.log(firstTimeConverted);
+
+
+        console.log('Pretty Start Time--> ' + formatStartTime);
+        console.log('Venue--> ' + currentEvent[i].venue.displayName);
+        //console.log("after inner for loop");
+        console.log('************************************')
+      }
+
+
+
+      console.log(response);
+
+
+      // Constructing HTML containing the artist information
+      var artistName = $("<h1>").text(response.name);
+      var artistURL = $("<a>").attr("href", response.url).append(artistName);
+      var artistImage = $("<img>").attr("src", response.thumb_url);
+      var trackerCount = $("<h2>").text(response.tracker_count + " fans tracking this artist");
+      var upcomingEvents = $("<h2>").text(response.upcoming_event_count + " upcoming events");
+      var goToArtist = $("<a>").attr("href", response.url).text("See Tour Dates");
+
+      // Empty the contents of the artist-div, append the new artist content
+      $("#artist-div").empty();
+      $("#artist-div").append(artistURL, artistImage, trackerCount, upcomingEvents, goToArtist);
+    });
+  }
+
+  // Event handler for user clicking the select-artist button
+  $("#select-artist").on("click", function (event) {
+    // Preventing the button from trying to submit the form
+    event.preventDefault();
+    // Storing the artist name
+    var inputArtist = $("#artist-input").val().trim();
+
+    // Running the searchBandsInTown function (passing in the artist as an argument)
+    searchBandsInTown(inputArtist);
+  });
+</script>
+
+</html>
