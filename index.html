@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	 <!-- Bootstrap CSS CDN  -->
+	 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
+	 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css">
+
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.12.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+ 
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="form-group row">
+			  <div class="col-xs-12">
+			    <label class="control-label">Pick a Date</label>
+			    <div class="input-group date" id="dp3" data-date-format="mm-dd-yyyy" data-provide="datepicker-inline">
+			      <input type="text" class="form-control" id="datepicker"  />
+			      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+			    </div>
+			  </div>
+			</div>
+		</div>
+	</div>
+   <script>
+    	$('.datepicker').datepicker();
+$('#datepicker').on('changeDate', function() {
+    $('#my_hidden_input').val(
+        $('#datepicker').datepicker('getFormattedDate')
+    );
+});
+
+    	$("#datepicker").datepicker("setDate", new Date());
+
+    	$('#datepicker').datepicker({
+        "setDate": new Date(),
+        "autoclose": true
+});
+// $('#datepicker').datepicker();
+// $('#datepicker').on('changeDate', function() {
+//     $('#my_hidden_input').val(
+//         $('#datepicker').datepicker('getFormattedDate')
+//     );
+// });
+
+    </script>
+</body>
+</html>
